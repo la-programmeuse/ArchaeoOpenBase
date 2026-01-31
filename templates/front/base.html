@@ -7,17 +7,41 @@
     <script defer src="../../static/script.js"></script>
     <title>ArchaeoOpenBase</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              color1: '#DBA251',
+              color2: '#E3B678'
+            }
+          }
+        }
+      }
+    </script>
 </head>
 <body>
-    <header>
-
+    <header class="bg-color1 flex justify-around p-10 py-12">
+      <ul>
+        <li><a href="/connect" class="active font-serif text-orange-950 text-2xl">login</a></li>
+        <li><a href="/register" class="active font-serif text-orange-950 text-2xl">register</a></li>
+      </ul>
+      <ul>
+        <li><a href="/" class="text-3xl font-serif text-orange-950">•ArchaeoOpenBase•</a></li>
+      </ul>
+      <ul>
+        <li><a href="/publish" class="active font-serif text-orange-950 text-2xl">publish</a></li>
+      </ul>
     </header>
 
     {% block content %}
     {% endblock %}
 
-    <footer>
-
+    <footer class="bg-color1 text-center font-serif text-orange-950">
+      <br>
+      <p>Pour toute demande contactez nous sur cette adresse email : spaceprogrammers@gmail.com</p>
+      <img class="size-8"src="../../static/images/enveloppe.png"/> 
+      <br>
     </footer>
 </body>
 </html>
