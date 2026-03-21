@@ -1,11 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'front/base.html' %}
 {% block content %}
 {% if erreur %}
 <p> Erreur : {{erreur}}</p>
 {% endif %}
 <main class="bg-color2">
+    <br>
     <div class="flex justify-center space-y-6 bg-color1 text-orange-950 font-serif">
-        <form method="POST" action = "">
+        <form method="POST" action = "{{url_for('register')}}">
             <br>
             <div class="text-center">
                 <label>Utilisateur</label>
@@ -17,12 +18,19 @@
                 <input name ="mots_de_passe" type="text" placeholder="entrer votre MDP">
             </div>
             <br>
+            <div class="text-center">
+                <label>confirmer mots de passe</label>
+                <input name ="confirme_mots_de_passe" type="text" placeholder="entrer votre MDP">
+            </div>
+            <br>
             <div class="flex justify-center" >
-                <button type = "submit">se connecter</button>
+                <button type = "submit">s'inscrire</button>
             </div>
             <br>
         </form>
     </div>
     <br> 
 </main>
+
+
 {% endblock %}

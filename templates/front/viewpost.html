@@ -1,0 +1,17 @@
+{% extends 'front/base.html' %}
+{% block content %}
+<main class="bg-color2"> 
+    <br>
+    <section class="grid grid-cols-4 grid-rows-3 flex gap-4">
+        <article class="bg-stone-50 text-center rounded-lg border border-color1 shadow-md">
+            {% for post in posts %}
+            <p> {{post.titre}} </p>
+            <p> {{post.Description}} </p>
+            <li><a href="/post" class="active font-serif text-orange-950">voir plus</a></li>
+            {% endfor %}
+        </article>
+    </section>
+    <br>
+</main>
+
+{% endblock %}
