@@ -1,0 +1,86 @@
+{% extends "front/base.html"%}
+{%block content%}
+{% if erreur %}
+{{erreur}}
+{%endif%}
+
+<div class="flex justify-center space-y-6 bg-color1 text-orange-950 font-serif">
+    <form action = "{{url_for('publish')}}" method="POST" enctype="multipart/form-data">
+        <br>
+        <div>
+            <label>Titre de l'annonce</label>
+            <input name="titre_annonces" type = "text" placeholder="">
+        </div>
+        <br>
+        <div>
+            <label>Descritpion</label>
+            <input name="phrase_annonces" type = "text" placeholder="">
+        </div>
+        <br>
+        <div>
+            <label>N° inventaire</label>
+            <input name="n_inventaire" type = "text" placeholder="">
+        </div>
+        <br>
+        <div>
+            <label>Latitude</label>
+            <input name="lat" type = "text" placeholder="">
+        </div>
+        <br>
+        <div>
+            <label>Longitude</label>
+            <input name="lng" type = "text" placeholder="">
+        </div>
+        <br>
+        <div>
+            <label>image</label>
+            <input type="file" name="image" accept="image/*" required />
+        </div>
+        <br>
+        <div>
+            <label>video</label>
+            <input type="file" name="video" accept="video/*">
+        </div>
+        <br>
+        <div>
+            <button class="flex justify-center" type="submit">Publier</button>
+        </div>
+        <br>
+    </form>
+    <script>
+        let map, marker;
+
+        function initMap() {
+            // Centre de la carte par défaut (ici Paris)
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 48.8566, lng: 2.3522 },
+                zoom: 5
+            });
+
+            // Quand l'utilisateur clique sur la carte
+            map.addListener("click", (event) => {
+                const pos = event.latLng;
+
+                // Si le marker n'existe pas, on le crée
+                if (!marker) {
+                    marker = new google.maps.Marker({
+                        position: pos,
+                        map: map
+                    });
+                } else {
+                    marker.setPosition(pos); // déplace le marker existant
+                }
+
+                // Stocke les coordonnées dans les champs cachés
+                document.getElementById("lat").value = pos.lat();
+                document.getElementById("lng").value = pos.lng();
+            });
+        }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxvPdCouaDKnkKMkP1L6vOkKZbPak24b4&callback=initMap">
+    </script>
+
+</div>
+<br> 
+{%endblock%}
