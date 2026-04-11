@@ -12,6 +12,7 @@ app = Flask("ArchaeoOpenBase")
 mongo = os.getenv('MONGO_URI')
 client = MongoClient(mongo)
 db = client.get_database("ArchaeoOpenBase")
+app.secret_key = os.urandom(24)
 
 @app.route("/")
 def index():
@@ -33,21 +34,32 @@ def viewpost():
     posts_data=list(db['annonce'].find({}))
     return render_template("viewpost.html", posts = posts_data)
 
-@app.route('/connect', methods=['POST', 'GET'])
+@app.route('/connect', methods=['GET', 'POST'])
 def connect():
-    if request.method == "POST":
-        db_user = db["user"]
-        user = db_user.find_one({"utilisateur" : request.form['utilisateur']})
-        if user: 
-            if bcrypt.checkpw( request.form['mots_de_passe'].encode('utf-8'), user["mots_de_passe"]):
-                session['role'] = user['role']
-                session['user'] = user['utilisateur']
-                return redirect("/")
-            else : 
-                return render_template('front/connect.html', ereur = "ce mots de passe ne correspond pas")
-        else : 
-            return render_template('front/connect.html')
-    return render_template('front/connect.html')
+    # Si c'est un GET, afficher le formulaire
+    if request.method == 'GET':
+        return render_template('front/connect.html')
+
+    # Sinon, POST = tentative de connexion
+    utilisateur = request.form.get('utilisateur')
+    mots_de_passe = request.form.get('mots_de_passe')
+
+    if not utilisateur or not mots_de_passe:
+        return render_template('front/connect.html', erreur="Veuillez remplir tous les champs")
+
+    user = db.user.find_one({'utilisateur': utilisateur})
+
+    if not user:
+        return render_template('front/connect.html', erreur="Le nom d'utilisateur n'existe pas")
+
+    # Vérification du mot de passe (hashé avec bcrypt)
+    if bcrypt.checkpw(mots_de_passe.encode('utf-8'), user['mots_de_passe']):
+        # Création de la session, on créer les cookies pour une session
+        session['role'] = user['role']
+        session['user'] = utilisateur
+        return redirect(url_for("index"))
+    else:
+        return render_template('front/connect.html', erreur="Le mot de passe est incorrect")
 
 @app.route("/register", methods=['POST', 'GET'])
 def register():
@@ -71,10 +83,13 @@ def register():
                 })
 
                 db["user"].insert_one(new_user)
+                session['user'] = utilisateur
+                session['role'] = "user"
                 return redirect("/")
             else :
                 return render_template('front/register.html', erreur = "les mots de passe ne corresponde pas")
-    return render_template('front/register.html')
+    else :
+        return render_template('front/register.html')
 
 @app.route('/publish', methods = ['POST', 'GET']) 
 def publish():
@@ -126,8 +141,8 @@ def publish():
             })
             return redirect("/")
         else: 
-            return render_template("publish.html", erreur = 'Veuillez remplir tout les champs obligatoires svp')
-    return render_template("publish.html")
+            return render_template("front/publish.html", erreur = 'Veuillez remplir tout les champs obligatoires svp')
+    return render_template("front/publish.html")
 
 
 ###########ADMIN############
@@ -143,7 +158,7 @@ def admin():
 
 @app.route('/admin/update_role/<user_id>')
 def update_role(user_id):
-    if 'util' in session and session['role'] == 'admin':
+    if 'user' in session and session['role'] == 'admin':
         new_role = request.form.get('role')
 
         db['user'].update_one({"_id" : ObjectId(user_id)}, {"$set" : {"role" : new_role}})
