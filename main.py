@@ -16,7 +16,7 @@ app.secret_key = os.urandom(24)
 
 @app.route("/")
 def index():
-        annonce_data = list(db['annonce'].find({}))
+        annonce_data = list(db['annonces'].find({}))
         user_data = list(db['user'].find({}))
         for annonce in annonce_data:
             annonce["_id"] = str(annonce["_id"])
