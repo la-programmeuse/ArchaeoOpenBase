@@ -1,0 +1,38 @@
+{% extends 'front/base.html' %}
+
+{% block content %}
+
+        <div class="text-center bg-color1 rounded-lg shadow-md text-orange-950 font-serif font-semibold">
+            <p> voici les resultats pour {{query}} </p>
+            <br>
+        </div>
+
+        <br>
+
+        <section class="grid grid-cols-4 gap-4 flex justify-around">
+            {% for annonce in annonces %}
+                <article class="bg-stone-50 ">
+                    <h3 class="text-lg text-center">{{ annonce['titre_annonces'] }}</h3>
+                    <p class="text-center line-clamp-2">{{ annonce['phrase_annonces'] }}</p>
+                    <p>N°inventaire : {{ annonce["n_inventaire"] }}</p>
+                    {% if annonce.image %}
+                        <img src="{{ url_for('static', filename='uploads/' + annonce.image) }}"
+                         class="mx-auto my-4">
+                    {% endif %}
+                    <br>
+
+                    <!-- Carte Google Maps -->
+                    {% if annonce.lat and annonce.lng %}
+                        <p>Coordonnées : {{ annonce.lat }} - {{ annonce.lng }}</p>
+                    {% endif %}
+                    <a class="text-stone-500" href="{{ url_for('viewpost', id=annonce['_id']) }}">afficher plus</a>
+                </article>
+            {% endfor %}
+            
+            {% if annonces|length == 0 %}
+                <p> je ne trouve pas d'article correspondant à vos besoin </p>
+            {% endif %}
+        </section>
+        <br>
+    </main>
+{% endblock %}

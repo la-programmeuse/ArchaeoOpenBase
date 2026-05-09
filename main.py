@@ -29,9 +29,26 @@ def index():
                         annonce[key] = None
         return render_template("front/index.html", annonce=annonce_data)
 
+@app.route("/search", methods = ['GET'])
+def search():
+    
+    print(db["annonces"].find_one())
+    query = request.args.get('q', '').strip()
+
+    if query == '':
+        result = list(db["annonces"].find({}))
+    else :
+        result =   list(db["annonces"].find({
+            "$or" : [
+                {"titre_annonces" : {"$regex" : query, "$options" : "i"} },
+                {"phrase_annonces" : {"$regex" : query, "$options" : "i"} }
+            ]
+        }))
+    return render_template("front/search_result.html", annonces=result, query=query)
+
 @app.route("/viewpost")
 def viewpost():
-    posts_data=list(db['annonce'].find({}))
+    posts_data=list(db['annonces'].find({}))
     return render_template("viewpost.html", posts = posts_data)
 
 @app.route('/connect', methods=['GET', 'POST'])
@@ -149,7 +166,7 @@ def publish():
 
 @app.route('/admin')
 def admin():
-    annonce_data = list(db['annonce'].find({}))
+    annonce_data = list(db['annonces'].find({}))
     user_data = list(db['user'].find({}))
     if 'user' in session and session['role'] == 'admin' :
         return render_template('back/back_accueil.html', annonce = annonce_data, user = user_data)
@@ -167,7 +184,7 @@ def update_role(user_id):
 
 @app.route('/admin/delete_user/<user_id>')
 def delete_user(user_id):
-    if 'util' in session and session['role'] == 'admin':
+    if 'user' in session and session['role'] == 'admin':
         db['user'].delete_one({"_id" : ObjectId(user_id)})
     return redirect(url_for('admin'))
 
