@@ -1,7 +1,7 @@
 {% extends 'front/base.html' %}
 
 {% block content %}
-
+    <main class="bg-color2">
         <div class="text-center bg-color1 rounded-lg shadow-md text-orange-950 font-serif font-semibold">
             <p> voici les resultats pour {{query}} </p>
             <br>
@@ -11,7 +11,7 @@
 
         <section class="grid grid-cols-4 gap-4 flex justify-around">
             {% for annonce in annonces %}
-                <article class="bg-stone-50 ">
+                <article class="bg-stone-50 text-center rounded-lg border border-color1 shadow-md">
                     <h3 class="text-lg text-center">{{ annonce['titre_annonces'] }}</h3>
                     <p class="text-center line-clamp-2">{{ annonce['phrase_annonces'] }}</p>
                     <p>N°inventaire : {{ annonce["n_inventaire"] }}</p>

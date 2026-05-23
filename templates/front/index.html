@@ -23,6 +23,18 @@
             {% if item.image %}
                 <img src="{{ url_for('static', filename='uploads/' + item.image) }}" width="400" height="300" class="mx-auto my-4" >
             {% endif %}
+            <div>
+                <span> {{annonce.likes}}</span>
+                <a href="{{url_for('like_post', annonces_id = annonce._id)}}"
+                    class="">
+                    {% if session.get('user') in annonce.liked_by %}
+                        💔 dislike
+                    {% else %}
+                        ❤️ like
+                    {% endif %}
+
+                </a>
+            </div>
             <br>
 
             <!-- Carte Google Maps -->

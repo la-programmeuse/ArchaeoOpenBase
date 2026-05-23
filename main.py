@@ -14,6 +14,19 @@ client = MongoClient(mongo)
 db = client.get_database("ArchaeoOpenBase")
 app.secret_key = os.urandom(24)
 
+result = db['annonces'].update_many({"$or" : [
+    {"likes" : {"$exists" : False}},
+    {"liked_by" : {"$exists" : False}}
+]},
+    {
+        "$set" : {  "likes" : 0,
+                    "liked_by" : []
+                }
+    }
+)
+
+print("database uploaded")
+
 @app.route("/")
 def index():
         annonce_data = list(db['annonces'].find({}))
@@ -154,12 +167,39 @@ def publish():
                 'lng' : Longitude,
                 'image': filename,
                 'video': video_filename,
-                'n_inventaire' : N_inventaire
+                'n_inventaire' : N_inventaire,
+                "likes" : 0,
+                "liked_by" : []
             })
             return redirect("/")
         else: 
             return render_template("front/publish.html", erreur = 'Veuillez remplir tout les champs obligatoires svp')
     return render_template("front/publish.html")
+
+@app.route("/post/like/<annonces_id>")
+def like_post(annonces_id):
+    if 'user' not in session:
+        return redirect(url_for('register'))
+    user = session['user']
+
+    annonces = db['annonces'].find_one({"_id" : ObjectId(annonces_id)})
+
+    if not annonces:
+        return redirect(url_for("annonces"))
+    if user in annonces.get("liked_by", []):
+        db['annonces'].update_one({"_id" : ObjectId(annonces_id)},
+                          {"$inc" : {"likes" : 1},
+                           "$pull" : {"liked_by" : user}
+                           })
+
+    else : 
+        db['annonces'].update_one({"_id" : ObjectId(annonces_id)},
+                          {"$inc" : {"likes" : 1},
+                           "$pull" : {"liked_by" : user}
+                           })
+
+    
+
 
 
 ###########ADMIN############
