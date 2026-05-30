@@ -106,6 +106,9 @@ def register():
                 salt = bcrypt.gensalt()
                 mdp_hash = bcrypt.hashpw(mdp_crypte, salt)
 
+                if len(mdp) < 8:
+                    return redirect(url_for("front/register"))
+
                 new_user = ({
                     "utilisateur" : utilisateur,
                     "mots_de_passe" : mdp_hash,
