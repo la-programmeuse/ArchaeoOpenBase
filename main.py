@@ -27,6 +27,20 @@ result = db['annonces'].update_many({"$or" : [
 
 print("database uploaded")
 
+def get_youtube_id(url):
+    if not url:
+        return None
+
+    match = re.search(
+        r"(?:youtube\.com/watch\?v=|youtu\.be/)([A-Za-z0-9_-]{11})",
+        url
+    )
+
+    return match.group(1) if match else None
+
+
+@app.route('/')
+
 @app.route("/")
 def index():
         annonce_data = list(db['annonces'].find({}))
@@ -40,6 +54,9 @@ def index():
                         annonce[key] = float(annonce[key])
                     except ValueError:
                         annonce[key] = None
+            annonce["youtube_id"] = get_youtube_id(
+                annonce.get("youtube_url")
+            )
         return render_template("front/index.html", annonce=annonce_data)
 
 @app.route("/search", methods = ['GET'])
@@ -62,7 +79,7 @@ def search():
 @app.route("/viewpost")
 def viewpost():
     posts_data=list(db['annonces'].find({}))
-    return render_template("viewpost.html", posts = posts_data)
+    return render_template("front/viewpost.html", posts = posts_data)
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
@@ -143,6 +160,7 @@ def publish():
         Longitude = request.form["lng"]
         image = request.files.get("image")
         video = request.files.get('video')
+        youtube_url = request.form.get("youtube_url", "").strip()
 
         filename = None
         video_filename = None
@@ -170,6 +188,7 @@ def publish():
                 'lng' : Longitude,
                 'image': filename,
                 'video': video_filename,
+                'youtube_url': youtube_url,
                 'n_inventaire' : N_inventaire,
                 "likes" : 0,
                 "liked_by" : []
@@ -188,7 +207,8 @@ def like_post(annonces_id):
     annonces = db['annonces'].find_one({"_id" : ObjectId(annonces_id)})
 
     if not annonces:
-        return redirect(url_for("annonces"))
+        return redirect(url_for("index"))
+
     if user in annonces.get("liked_by", []):
         db['annonces'].update_one({"_id" : ObjectId(annonces_id)},
                           {"$inc" : {"likes" : 1},
@@ -200,6 +220,7 @@ def like_post(annonces_id):
                           {"$inc" : {"likes" : 1},
                            "$pull" : {"liked_by" : user}
                            })
+    return redirect(url_for("index"))
 
     
 

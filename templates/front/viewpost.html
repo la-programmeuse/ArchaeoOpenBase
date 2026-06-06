@@ -2,12 +2,35 @@
 {% block content %}
 <main class="bg-color2"> 
     <br>
-    <section class="grid grid-cols-4 grid-rows-3 flex gap-4">
-        <article class="bg-stone-50 text-center rounded-lg border border-color1 shadow-md">
-            {% for post in posts %}
-            <p> {{post.titre}} </p>
-            <p> {{post.Description}} </p>
-            <li><a href="/post" class="active font-serif text-orange-950">voir plus</a></li>
+        <article class="bg-stone-50 text-center rounded-lg border border-orange-200 shadow-md">
+            {% for item in posts %}
+                <p>{{ item["titre_annonces"] }}</p>
+                <p>{{ item["phrase_annonces"] }}</p>
+                <p>N°inventaire : {{ item["n_inventaire"] }}</p>
+                {% if item.image %}
+                <img src="{{ url_for('static', filename='uploads/' + item.image) }}" width="400" height="300" class="mx-auto my-4">
+                {% endif %}
+                {% if item.video %}
+                <video controls width="500">
+                <source src="{{ url_for('static', filename='uploads/' + a.video) }}">
+                </video>
+                {% endif %}
+
+                {% if item.youtube_id %}
+                <iframe
+                width="560"
+                height="315"
+                src="https://www.youtube.com/embed/{{ a.youtube_id }}"
+                frameborder="0"
+                allowfullscreen>
+                </iframe>
+                {% endif %}
+                <br>
+        
+                <!-- Carte Google Maps -->
+                {% if item.lat and item.lng %}
+                    <p>Coordonnées : {{ item.lat }} - {{ item.lng }}</p>
+                {% endif %}
             {% endfor %}
         </article>
     </section>
