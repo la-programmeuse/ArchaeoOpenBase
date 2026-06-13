@@ -1,8 +1,8 @@
-{% extend 'back/back_base.html'}
+{% extends 'back/back_base.html'%}
 
 {% block content %}
 
-<main>
+<main class="bg-color2">
     <h1> tout les archeologue </h1>
 
     <section>
@@ -17,7 +17,7 @@
                 <tr>
                     <td>{{user['user']}}</td>
                     <td>
-                        <form action="{{ url_for('update_role', user_id = utilisateur['_id'])}}" method="POST">
+                        <form action="{{ url_for('update_role', user_id = user['_id'])}}" method="POST">
                             <select>
                                 <option value = "user" {% if user['role'] == 'user' %} selected {% endif %} > user </option>
                                 <option value = "admin" {% if user['role'] == 'admin' %} selected {% endif %} > admin </option>
@@ -25,8 +25,9 @@
                         </form>
                     </td>
                     <td><a href="" >Voir</a></td>
-                    <td><a href="{{url_for('delete_role', user_id = utilisateur['_id'])}}" onclick="return confirm('Supprimer cette archeologue ?')" >supprimer</a></td>
+                    <td><a href="{{url_for('delete_user', user_id = user['_id'])}}" onclick="return confirm('Supprimer cette archeologue ?')" >supprimer</a></td>
                 </tr>
+                {%endfor%}
             </tbody>
         </table>
     </section>
@@ -40,12 +41,13 @@
             <tbody>
                 {%for annonce in annonce%}
                 <tr>
-                    <td>{{titre['titre_annonces']}}</td>
-                    <td>{{description['phrase_annonces']}}</td>
+                    <td>{{annonce['titre_annonces']}}</td>
+                    <td>{{annonce['phrase_annonces']}}</td>
                     <td><a>Voir</a></td>
                     <td><a>supprimer</a></td>
                     <td><a>modifier</a></td>
                 </tr>
+                {%endfor%}
             </tbody>
         </table>
     </section>

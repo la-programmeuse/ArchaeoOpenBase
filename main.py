@@ -252,6 +252,14 @@ def delete_user(user_id):
         db['user'].delete_one({"_id" : ObjectId(user_id)})
     return redirect(url_for('admin'))
 
+@app.route('/erreur404')
+def error_404():
+    return render_template("front/erreur_404.html"), 404
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('front/erreur_404.html'),404
+
 
 
 app.run(host ='0.0.0.0', port=81)
