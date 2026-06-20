@@ -3,7 +3,6 @@
 <main class="bg-color2"> 
     <br>
         <article class="bg-stone-50 text-center rounded-lg border border-orange-200 shadow-md">
-            {% for item in posts %}
                 <p>{{ item["titre_annonces"] }}</p>
                 <p>{{ item["phrase_annonces"] }}</p>
                 <p>N°inventaire : {{ item["n_inventaire"] }}</p>
@@ -31,7 +30,7 @@
                 {% if item.lat and item.lng %}
                     <p>Coordonnées : {{ item.lat }} - {{ item.lng }}</p>
                 {% endif %}
-            {% endfor %}
+            
         </article>
     </section>
     <br>

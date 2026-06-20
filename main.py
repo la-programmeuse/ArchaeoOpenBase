@@ -76,10 +76,10 @@ def search():
         }))
     return render_template("front/search_result.html", annonces=result, query=query)
 
-@app.route("/viewpost")
-def viewpost():
-    posts_data=list(db['annonces'].find({}))
-    return render_template("front/viewpost.html", posts = posts_data)
+@app.route("/viewpost/<id>")
+def viewpost(id):
+    item = db['annonces'].find_one({"_id": ObjectId(id)})
+    return render_template("front/viewpost.html", item=item)
 
 @app.route('/connect', methods=['GET', 'POST'])
 def connect():
@@ -261,5 +261,5 @@ def page_not_found(error):
     return render_template('front/erreur_404.html'),404
 
 
-
-app.run(host ='0.0.0.0', port=81)
+if __name__ == "__main__":
+    app.run(host ='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
